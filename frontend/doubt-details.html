@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doubt Details - Peer Learning Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>PeerLearn</h2>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+            <li><a href="notes.html" class="nav-link">Notes</a></li>
+            <li><a href="playlists.html" class="nav-link">Playlists</a></li>
+            <li><a href="doubts.html" class="nav-link">Doubts</a></li>
+            <li><a href="profile.html" class="nav-link">Profile</a></li>
+        </ul>
+        <div class="nav-user">
+            <span id="userName">User</span>
+            <button onclick="logout()" class="btn btn-logout">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <header class="page-header">
+            <h1>Doubt Details</h1>
+            <p>View and answer questions from the community</p>
+        </header>
+
+        <!-- Loading State -->
+        <div id="loadingDoubt" class="loading-state">
+            <div class="spinner"></div>
+            <p>Loading doubt details...</p>
+        </div>
+
+        <!-- Doubt Details Container -->
+        <div id="doubtDetails" class="doubt-details-container">
+            <!-- Doubt details will be loaded here from backend -->
+        </div>
+
+        <!-- Message Display -->
+        <div id="message" class="message hidden"></div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Load doubt details when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuthAndRedirect()) {
+                updateUserUI();
+                updateNavigation();
+                loadDoubtDetails();
+                
+                // Restore scroll position if coming from doubts page
+                const scrollPosition = sessionStorage.getItem('scrollPosition');
+                if (scrollPosition) {
+                    sessionStorage.removeItem('scrollPosition');
+                    window.scrollTo(0, parseInt(scrollPosition));
+                }
+            }
+        });
+    </script>
+</body>
+</html>

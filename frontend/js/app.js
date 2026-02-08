@@ -4,7 +4,7 @@
    =================================== */
 
 // Global Variables
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 let currentUser = null;
 
 // ===================================
@@ -119,7 +119,7 @@ async function signup(name, email, password) {
         showLoading('loadingSpinner');
         clearErrors();
         
-        const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -287,9 +287,16 @@ async function loadDoubts() {
     
     try {
         const data = await safeAPICall(`${API_BASE_URL}/doubts`);
-        displayDoubts(data);
+        displayDoubts(data.data || []);
     } catch (error) {
         console.error('Load doubts error:', error);
+        // Show empty state on error
+        const doubtsList = document.getElementById('doubtsList');
+        const noDoubts = document.getElementById('noDoubts');
+        if (doubtsList && noDoubts) {
+            doubtsList.innerHTML = '';
+            noDoubts.classList.remove('hidden');
+        }
     } finally {
         hideLoading('loadingDoubts');
     }
@@ -300,6 +307,8 @@ function displayDoubts(doubts) {
     const doubtsList = document.getElementById('doubtsList');
     const noDoubts = document.getElementById('noDoubts');
     
+    if (!doubtsList || !noDoubts) return;
+    
     if (doubts.length === 0) {
         doubtsList.innerHTML = '';
         noDoubts.classList.remove('hidden');
@@ -309,30 +318,31 @@ function displayDoubts(doubts) {
     noDoubts.classList.add('hidden');
     
     doubtsList.innerHTML = doubts.map(doubt => {
+        const author = doubt.author || { name: 'Anonymous' };
         return `
-        <div class="doubt-card">
+        <div class="doubt-card" onclick="viewDoubt('${doubt._id}')">
             <div class="doubt-header">
                 <h3>${doubt.title}</h3>
                 <div class="doubt-meta">
                     <span class="doubt-category">${doubt.category}</span>
-                    <span class="doubt-status ${doubt.solved ? 'answered' : ''}">${doubt.solved ? '✓ Answered' : 'Open'}</span>
+                    <span class="doubt-status ${doubt.isAnswered ? 'answered' : ''}">${doubt.isAnswered ? '✓ Answered' : 'Open'}</span>
                 </div>
             </div>
             <div class="doubt-content">
-                <p>${doubt.content}</p>
+                <p>${doubt.details}</p>
                 <div class="doubt-tags">
                     ${(doubt.tags || []).map(tag => `<span class="tag">#${tag}</span>`).join('')}
                 </div>
             </div>
             <div class="doubt-footer">
                 <div class="doubt-info">
-                    <span>Asked by: ${doubt.author}</span>
+                    <span>Asked by: ${author.name}</span>
                     <span>${timeAgo(new Date(doubt.createdAt))}</span>
                 </div>
                 <div class="doubt-stats">
                     <span>👁 ${doubt.views || 0}</span>
-                    <span>💬 ${doubt.answers || 0}</span>
-                    <span>👍 ${doubt.upvotes || 0}</span>
+                    <span>💬 ${doubt.answerCount || doubt.answers?.length || 0}</span>
+                    <span>👍 ${doubt.voteScore || doubt.upvotes?.length || 0}</span>
                 </div>
             </div>
         </div>`;
@@ -632,8 +642,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const questionData = {
                 title: document.getElementById('questionTitle').value,
                 category: document.getElementById('questionCategory').value,
-                content: document.getElementById('questionDetails').value,
-                tags: document.getElementById('questionTags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
+                details: document.getElementById('questionDetails').value,
+                tags: document.getElementById('questionTags').value
             };
             
             postQuestion(questionData);
@@ -662,6 +672,8 @@ document.addEventListener('DOMContentLoaded', function() {
             loadPlaylists();
         } else if (currentPath.includes('doubts.html')) {
             loadDoubts();
+        } else if (currentPath.includes('doubt-details.html')) {
+            // Handled by page-specific script
         } else if (currentPath.includes('profile.html')) {
             loadProfile();
         } else if (currentPath.includes('dashboard.html')) {
@@ -685,8 +697,28 @@ function searchPlaylists() {
 
 function searchDoubts() {
     const searchTerm = document.getElementById('searchInput').value;
-    console.log('Searching doubts:', searchTerm);
-    // TODO: Implement search functionality
+    const category = document.getElementById('categoryFilter').value;
+    
+    let url = `${API_BASE_URL}/doubts?`;
+    const params = [];
+    
+    if (searchTerm) params.push(`search=${encodeURIComponent(searchTerm)}`);
+    if (category) params.push(`category=${encodeURIComponent(category)}`);
+    
+    url += params.join('&');
+    
+    showLoading('loadingDoubts');
+    
+    safeAPICall(url)
+        .then(data => {
+            displayDoubts(data.data || []);
+        })
+        .catch(error => {
+            console.error('Search doubts error:', error);
+        })
+        .finally(() => {
+            hideLoading('loadingDoubts');
+        });
 }
 
 // Filter functions (placeholder implementations)
@@ -703,9 +735,181 @@ function filterPlaylists() {
 }
 
 function filterDoubts() {
-    const category = document.getElementById('categoryFilter').value;
-    console.log('Filtering doubts by category:', category);
-    // TODO: Implement filter functionality
+    searchDoubts(); // Reuse search function with category filter
+}
+
+// View doubt details
+function viewDoubt(doubtId) {
+    // Store current scroll position
+    sessionStorage.setItem('scrollPosition', window.scrollY);
+    // Navigate to doubt details page (we'll create this)
+    window.location.href = `doubt-details.html?id=${doubtId}`;
+}
+
+// Load doubt details
+async function loadDoubtDetails() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const doubtId = urlParams.get('id');
+    
+    if (!doubtId) {
+        showMessage('Doubt ID not found', 'error');
+        return;
+    }
+    
+    showLoading('loadingDoubt');
+    
+    try {
+        const data = await safeAPICall(`${API_BASE_URL}/doubts/${doubtId}`);
+        displayDoubtDetails(data.data);
+    } catch (error) {
+        console.error('Load doubt details error:', error);
+        showMessage('Failed to load doubt details', 'error');
+    } finally {
+        hideLoading('loadingDoubt');
+    }
+}
+
+// Display doubt details
+function displayDoubtDetails(doubt) {
+    const container = document.getElementById('doubtDetails');
+    if (!container) return;
+    
+    const author = doubt.author || { name: 'Anonymous' };
+    
+    container.innerHTML = `
+        <div class="doubt-detail-card">
+            <div class="doubt-header">
+                <h1>${doubt.title}</h1>
+                <div class="doubt-meta">
+                    <span class="doubt-category">${doubt.category}</span>
+                    <span class="doubt-status ${doubt.isAnswered ? 'answered' : ''}">${doubt.isAnswered ? '✓ Answered' : 'Open'}</span>
+                </div>
+            </div>
+            
+            <div class="doubt-content">
+                <p>${doubt.details}</p>
+                <div class="doubt-tags">
+                    ${(doubt.tags || []).map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                </div>
+            </div>
+            
+            <div class="doubt-actions">
+                <button onclick="voteOnDoubt('${doubt._id}', 'upvote')" class="btn btn-secondary">
+                    👍 Upvote (${doubt.upvotes?.length || 0})
+                </button>
+                <button onclick="voteOnDoubt('${doubt._id}', 'downvote')" class="btn btn-secondary">
+                    👎 Downvote (${doubt.downvotes?.length || 0})
+                </button>
+            </div>
+            
+            <div class="doubt-footer">
+                <div class="doubt-info">
+                    <span>Asked by: ${author.name}</span>
+                    <span>${timeAgo(new Date(doubt.createdAt))}</span>
+                </div>
+                <div class="doubt-stats">
+                    <span>👁 ${doubt.views || 0} views</span>
+                    <span>💬 ${doubt.answers?.length || 0} answers</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="answers-section">
+            <h2>Answers (${doubt.answers?.length || 0})</h2>
+            
+            <div class="answer-form">
+                <h3>Your Answer</h3>
+                <textarea id="answerContent" placeholder="Write your answer..." rows="4"></textarea>
+                <button onclick="postAnswer('${doubt._id}')" class="btn btn-primary">Post Answer</button>
+            </div>
+            
+            <div id="answersList" class="answers-list">
+                ${displayAnswers(doubt.answers || [])}
+            </div>
+        </div>
+    `;
+}
+
+// Display answers
+function displayAnswers(answers) {
+    if (answers.length === 0) {
+        return '<p class="no-answers">No answers yet. Be the first to answer!</p>';
+    }
+    
+    return answers.map(answer => {
+        const author = answer.author || { name: 'Anonymous' };
+        return `
+        <div class="answer-card">
+            <div class="answer-content">
+                <p>${answer.content}</p>
+            </div>
+            <div class="answer-actions">
+                <button onclick="voteOnAnswer('${answer._id}', 'upvote')" class="btn btn-small btn-secondary">
+                    👍 ${answer.upvotes?.length || 0}
+                </button>
+                <button onclick="voteOnAnswer('${answer._id}', 'downvote')" class="btn btn-small btn-secondary">
+                    👎 ${answer.downvotes?.length || 0}
+                </button>
+            </div>
+            <div class="answer-footer">
+                <div class="answer-info">
+                    <span>Answered by: ${author.name}</span>
+                    <span>${timeAgo(new Date(answer.createdAt))}</span>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// Vote on doubt
+async function voteOnDoubt(doubtId, voteType) {
+    if (!isLoggedIn()) {
+        showMessage('Please login to vote', 'error');
+        return;
+    }
+    
+    try {
+        const data = await safeAPICall(`${API_BASE_URL}/doubts/${doubtId}/vote`, {
+            method: 'POST',
+            body: JSON.stringify({ voteType })
+        });
+        
+        if (data) {
+            displayDoubtDetails(data.data);
+            showMessage('Vote recorded!', 'success');
+        }
+    } catch (error) {
+        console.error('Vote error:', error);
+    }
+}
+
+// Post answer
+async function postAnswer(doubtId) {
+    if (!isLoggedIn()) {
+        showMessage('Please login to post an answer', 'error');
+        return;
+    }
+    
+    const content = document.getElementById('answerContent').value.trim();
+    if (!content) {
+        showMessage('Please write an answer', 'error');
+        return;
+    }
+    
+    try {
+        const data = await safeAPICall(`${API_BASE_URL}/doubts/${doubtId}/answers`, {
+            method: 'POST',
+            body: JSON.stringify({ content })
+        });
+        
+        if (data) {
+            document.getElementById('answerContent').value = '';
+            displayDoubtDetails(data.data);
+            showMessage('Answer posted successfully!', 'success');
+        }
+    } catch (error) {
+        console.error('Post answer error:', error);
+    }
 }
 
 // Load dashboard data

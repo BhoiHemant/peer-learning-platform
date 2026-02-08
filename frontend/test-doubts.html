@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Doubts API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .btn { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .doubt-card { border: 1px solid #ddd; margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Doubts API Connection</h1>
+        
+        <div id="message" class="message hidden"></div>
+        
+        <div>
+            <button onclick="testConnection()" class="btn">Test Connection</button>
+            <button onclick="loadDoubts()" class="btn">Load Doubts</button>
+            <button onclick="testAuth()" class="btn">Test Auth</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5001/api';
+        
+        function showMessage(message, type = 'success') {
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = message;
+            messageElement.className = `message ${type}`;
+            messageElement.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageElement.classList.add('hidden');
+            }, 5000);
+        }
+        
+        async function testConnection() {
+            try {
+                const response = await fetch('http://localhost:5001/');
+                const text = await response.text();
+                showMessage('Connection successful! Server says: ' + text, 'success');
+                document.getElementById('results').innerHTML = '<pre>' + text + '</pre>';
+            } catch (error) {
+                showMessage('Connection failed: ' + error.message, 'error');
+            }
+        }
+        
+        async function loadDoubts() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/doubts`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Doubts loaded successfully!', 'success');
+                    displayDoubts(data.data);
+                } else {
+                    showMessage('Failed to load doubts: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Error loading doubts: ' + error.message, 'error');
+            }
+        }
+        
+        function displayDoubts(doubts) {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h2>Doubts:</h2>' + 
+                doubts.map(doubt => `
+                    <div class="doubt-card">
+                        <h3>${doubt.title}</h3>
+                        <p><strong>Category:</strong> ${doubt.category}</p>
+                        <p>${doubt.details}</p>
+                        <p><strong>Tags:</strong> ${doubt.tags.join(', ')}</p>
+                        <p><strong>Asked by:</strong> ${doubt.author.name}</p>
+                        <p><strong>Views:</strong> ${doubt.views}</p>
+                    </div>
+                `).join('');
+        }
+        
+        async function testAuth() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Test User',
+                        email: 'test@example.com',
+                        password: 'password123'
+                    })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Auth test successful!', 'success');
+                    document.getElementById('results').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } else {
+                    showMessage('Auth test failed: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Auth test error: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
