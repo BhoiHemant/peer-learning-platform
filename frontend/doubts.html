@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doubts - Peer Learning Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>PeerLearn</h2>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+            <li><a href="notes.html" class="nav-link">Notes</a></li>
+            <li><a href="playlists.html" class="nav-link">Playlists</a></li>
+            <li><a href="doubts.html" class="nav-link active">Doubts</a></li>
+            <li><a href="profile.html" class="nav-link">Profile</a></li>
+        </ul>
+        <div class="nav-user">
+            <span id="userName">User</span>
+            <button onclick="logout()" class="btn btn-logout">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <header class="page-header">
+            <h1>Ask Doubts</h1>
+            <p>Get help from the community and help others learn</p>
+        </header>
+
+        <!-- Ask Question Form -->
+        <section class="question-form-section">
+            <h2>Ask a Question</h2>
+            <form id="questionForm" class="question-form">
+                <div class="form-group">
+                    <label for="questionTitle">Question Title</label>
+                    <input type="text" id="questionTitle" name="title" placeholder="What's your question?" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="questionCategory">Category</label>
+                    <select id="questionCategory" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Biology">Biology</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="questionDetails">Details</label>
+                    <textarea id="questionDetails" name="details" placeholder="Provide more details about your question..." rows="5" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="questionTags">Tags (comma separated)</label>
+                    <input type="text" id="questionTags" name="tags" placeholder="react, javascript, help">
+                </div>
+                
+                <button type="submit" class="btn btn-primary full-width">Post Question</button>
+            </form>
+        </section>
+
+        <!-- Search and Filter -->
+        <section class="search-filter">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search questions..." onkeyup="searchDoubts()">
+                <button onclick="searchDoubts()" class="btn btn-secondary">Search</button>
+            </div>
+            
+            <div class="filter-options">
+                <select id="categoryFilter" onchange="filterDoubts()">
+                    <option value="">All Categories</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Biology">Biology</option>
+                    <option value="General">General</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Questions List -->
+        <section class="doubts-section">
+            <h2>Recent Questions</h2>
+            <div id="doubtsList" class="doubts-list">
+                <!-- Doubts will be loaded here from backend -->
+                <div class="doubt-card">
+                    <div class="doubt-header">
+                        <h3>How does React useState hook work internally?</h3>
+                        <div class="doubt-meta">
+                            <span class="doubt-category">Computer Science</span>
+                            <span class="doubt-status answered">✓ Answered</span>
+                        </div>
+                    </div>
+                    <div class="doubt-content">
+                        <p>I'm trying to understand the internal mechanism of React's useState hook. Can someone explain how it maintains state across re-renders?</p>
+                        <div class="doubt-tags">
+                            <span class="tag">#react</span>
+                            <span class="tag">#javascript</span>
+                            <span class="tag">#hooks</span>
+                        </div>
+                    </div>
+                    <div class="doubt-footer">
+                        <div class="doubt-info">
+                            <span>Asked by: John Doe</span>
+                            <span>2 hours ago</span>
+                        </div>
+                        <div class="doubt-stats">
+                            <span>👁 234 views</span>
+                            <span>💬 12 answers</span>
+                            <span>👍 45 upvotes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loadingDoubts" class="loading-state hidden">
+                <div class="spinner"></div>
+                <p>Loading questions...</p>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="noDoubts" class="empty-state hidden">
+                <p>No questions found. Be the first to ask a question!</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

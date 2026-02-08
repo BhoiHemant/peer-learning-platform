@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Peer Learning Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>PeerLearn</h2>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+            <li><a href="notes.html" class="nav-link">Notes</a></li>
+            <li><a href="playlists.html" class="nav-link">Playlists</a></li>
+            <li><a href="doubts.html" class="nav-link">Doubts</a></li>
+            <li><a href="profile.html" class="nav-link">Profile</a></li>
+        </ul>
+        <div class="nav-user">
+            <span id="userName">User</span>
+            <button onclick="logout()" class="btn btn-logout">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <header class="page-header">
+            <h1>Welcome to Your Dashboard</h1>
+            <p>Access all your learning resources from here</p>
+        </header>
+
+        <!-- Quick Actions Grid -->
+        <section class="quick-actions">
+            <div class="action-card">
+                <h3>📚 Study Notes</h3>
+                <p>Browse and upload study materials</p>
+                <a href="notes.html" class="btn btn-secondary">Go to Notes</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>🎥 Video Playlists</h3>
+                <p>Access curated YouTube playlists</p>
+                <a href="playlists.html" class="btn btn-secondary">Go to Playlists</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>💬 Ask Doubts</h3>
+                <p>Get help from the community</p>
+                <a href="doubts.html" class="btn btn-secondary">Go to Doubts</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>👤 Your Profile</h3>
+                <p>Manage your account and activity</p>
+                <a href="profile.html" class="btn btn-secondary">Go to Profile</a>
+            </div>
+        </section>
+
+        <!-- Recent Activity -->
+        <section class="recent-activity">
+            <h2>Recent Activity</h2>
+            <div id="activityList" class="activity-list">
+                <!-- Activity items will be loaded here -->
+                <div class="activity-item">
+                    <span class="activity-icon">📚</span>
+                    <div class="activity-content">
+                        <p class="activity-text">Welcome to Peer Learning Platform!</p>
+                        <span class="activity-time">Just now</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <h2>Your Learning Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Notes Uploaded</h3>
+                    <span class="stat-number" id="notesCount">0</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Doubts Asked</h3>
+                    <span class="stat-number" id="doubtsCount">0</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Playlists Shared</h3>
+                    <span class="stat-number" id="playlistsCount">0</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Helpful Answers</h3>
+                    <span class="stat-number" id="answersCount">0</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

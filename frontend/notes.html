@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes - Peer Learning Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>PeerLearn</h2>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+            <li><a href="notes.html" class="nav-link active">Notes</a></li>
+            <li><a href="playlists.html" class="nav-link">Playlists</a></li>
+            <li><a href="doubts.html" class="nav-link">Doubts</a></li>
+            <li><a href="profile.html" class="nav-link">Profile</a></li>
+        </ul>
+        <div class="nav-user">
+            <span id="userName">User</span>
+            <button onclick="logout()" class="btn btn-logout">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <header class="page-header">
+            <h1>Study Notes</h1>
+            <p>Discover and share high-quality study materials</p>
+            <button onclick="showUploadForm()" class="btn btn-primary">Upload Note</button>
+        </header>
+
+        <!-- Upload Form (Hidden by default) -->
+        <section id="uploadForm" class="upload-section hidden">
+            <h2>Upload New Note</h2>
+            <form id="noteUploadForm" class="upload-form">
+                <div class="form-group">
+                    <label for="noteTitle">Title</label>
+                    <input type="text" id="noteTitle" name="title" placeholder="Enter note title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="noteSubject">Subject</label>
+                    <select id="noteSubject" name="subject" required>
+                        <option value="">Select Subject</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Biology">Biology</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="noteDescription">Description</label>
+                    <textarea id="noteDescription" name="description" placeholder="Brief description of your note" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="noteFile">File</label>
+                    <input type="file" id="noteFile" name="file" accept=".pdf,.doc,.docx,.txt" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Upload Note</button>
+                    <button type="button" onclick="hideUploadForm()" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Search and Filter -->
+        <section class="search-filter">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search notes..." onkeyup="searchNotes()">
+                <button onclick="searchNotes()" class="btn btn-secondary">Search</button>
+            </div>
+            
+            <div class="filter-options">
+                <select id="subjectFilter" onchange="filterNotes()">
+                    <option value="">All Subjects</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Biology">Biology</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Notes List -->
+        <section class="notes-section">
+            <h2>Available Notes</h2>
+            <div id="notesList" class="notes-grid">
+                <!-- Notes will be loaded here from backend -->
+                <div class="note-card">
+                    <h3>Sample Note Title</h3>
+                    <p class="note-subject">Computer Science</p>
+                    <p class="note-description">This is a sample description of a study note...</p>
+                    <div class="note-meta">
+                        <span class="note-author">By: John Doe</span>
+                        <span class="note-date">2024-01-15</span>
+                    </div>
+                    <div class="note-actions">
+                        <button class="btn btn-small btn-primary">Download</button>
+                        <button class="btn btn-small btn-secondary">View Details</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loadingNotes" class="loading-state hidden">
+                <div class="spinner"></div>
+                <p>Loading notes...</p>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="noNotes" class="empty-state hidden">
+                <p>No notes found. Be the first to upload one!</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

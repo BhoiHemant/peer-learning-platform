@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlists - Peer Learning Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>PeerLearn</h2>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+            <li><a href="notes.html" class="nav-link">Notes</a></li>
+            <li><a href="playlists.html" class="nav-link active">Playlists</a></li>
+            <li><a href="doubts.html" class="nav-link">Doubts</a></li>
+            <li><a href="profile.html" class="nav-link">Profile</a></li>
+        </ul>
+        <div class="nav-user">
+            <span id="userName">User</span>
+            <button onclick="logout()" class="btn btn-logout">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <header class="page-header">
+            <h1>Video Playlists</h1>
+            <p>Curated YouTube playlists for effective learning</p>
+            <button onclick="showAddPlaylistForm()" class="btn btn-primary">Add Playlist</button>
+        </header>
+
+        <!-- Add Playlist Form (Hidden by default) -->
+        <section id="addPlaylistForm" class="upload-section hidden">
+            <h2>Add New Playlist</h2>
+            <form id="playlistAddForm" class="upload-form">
+                <div class="form-group">
+                    <label for="playlistTitle">Title</label>
+                    <input type="text" id="playlistTitle" name="title" placeholder="Enter playlist title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="playlistUrl">YouTube URL</label>
+                    <input type="url" id="playlistUrl" name="url" placeholder="https://youtube.com/playlist?list=..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="playlistCategory">Category</label>
+                    <select id="playlistCategory" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Programming">Programming</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="playlistDescription">Description</label>
+                    <textarea id="playlistDescription" name="description" placeholder="Brief description of the playlist" rows="3"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Playlist</button>
+                    <button type="button" onclick="hideAddPlaylistForm()" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Search and Filter -->
+        <section class="search-filter">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search playlists..." onkeyup="searchPlaylists()">
+                <button onclick="searchPlaylists()" class="btn btn-secondary">Search</button>
+            </div>
+            
+            <div class="filter-options">
+                <select id="categoryFilter" onchange="filterPlaylists()">
+                    <option value="">All Categories</option>
+                    <option value="Web Development">Web Development</option>
+                    <option value="Data Science">Data Science</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Programming">Programming</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Playlists Grid -->
+        <section class="playlists-section">
+            <h2>Available Playlists</h2>
+            <div id="playlistsList" class="playlists-grid">
+                <!-- Playlists will be loaded here from backend -->
+                <div class="playlist-card">
+                    <div class="playlist-thumbnail">
+                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="Playlist thumbnail">
+                        <div class="playlist-duration">12 videos</div>
+                    </div>
+                    <div class="playlist-info">
+                        <h3>Complete React Development Course</h3>
+                        <p class="playlist-category">Web Development</p>
+                        <p class="playlist-description">Learn React from scratch to advanced concepts...</p>
+                        <div class="playlist-meta">
+                            <span class="playlist-views">1.2K views</span>
+                            <span class="playlist-rating">⭐ 4.8</span>
+                        </div>
+                        <div class="playlist-actions">
+                            <a href="#" target="_blank" class="btn btn-small btn-primary">Watch on YouTube</a>
+                            <button class="btn btn-small btn-secondary">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loadingPlaylists" class="loading-state hidden">
+                <div class="spinner"></div>
+                <p>Loading playlists...</p>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="noPlaylists" class="empty-state hidden">
+                <p>No playlists found. Add your first playlist!</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

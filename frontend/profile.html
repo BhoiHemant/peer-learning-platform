@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Peer Learning Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>PeerLearn</h2>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+            <li><a href="notes.html" class="nav-link">Notes</a></li>
+            <li><a href="playlists.html" class="nav-link">Playlists</a></li>
+            <li><a href="doubts.html" class="nav-link">Doubts</a></li>
+            <li><a href="profile.html" class="nav-link active">Profile</a></li>
+        </ul>
+        <div class="nav-user">
+            <span id="userName">User</span>
+            <button onclick="logout()" class="btn btn-logout">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <header class="page-header">
+            <h1>My Profile</h1>
+            <p>Manage your account and track your learning progress</p>
+        </header>
+
+        <!-- Profile Info Section -->
+        <section class="profile-section">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff" alt="User Avatar">
+                    <button onclick="changeAvatar()" class="btn btn-small btn-secondary">Change</button>
+                </div>
+                <div class="profile-info">
+                    <h2 id="profileName">John Doe</h2>
+                    <p id="profileEmail">john.doe@example.com</p>
+                    <p id="profileBio">Computer Science student passionate about web development and helping others learn.</p>
+                    <button onclick="editProfile()" class="btn btn-primary">Edit Profile</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="profile-stats">
+            <h2>Learning Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>📚 Notes Uploaded</h3>
+                    <span class="stat-number" id="notesUploaded">12</span>
+                </div>
+                <div class="stat-card">
+                    <h3>🎥 Playlists Shared</h3>
+                    <span class="stat-number" id="playlistsShared">8</span>
+                </div>
+                <div class="stat-card">
+                    <h3>💬 Doubts Answered</h3>
+                    <span class="stat-number" id="doubtsAnswered">45</span>
+                </div>
+                <div class="stat-card">
+                    <h3>⭐ Reputation</h3>
+                    <span class="stat-number" id="reputation">234</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Tabs -->
+        <section class="activity-section">
+            <h2>My Activity</h2>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('uploaded')">Uploaded Notes</button>
+                <button class="tab-btn" onclick="showTab('shared')">Shared Playlists</button>
+                <button class="tab-btn" onclick="showTab('asked')">Asked Doubts</button>
+                <button class="tab-btn" onclick="showTab('answered')">Answered Doubts</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Uploaded Notes Tab -->
+                <div id="uploaded-tab" class="tab-pane active">
+                    <div id="uploadedNotes" class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-icon">📚</span>
+                            <div class="activity-content">
+                                <p class="activity-text">React Hooks Guide</p>
+                                <span class="activity-meta">234 downloads • 4.5 ⭐ • 2 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-icon">📚</span>
+                            <div class="activity-content">
+                                <p class="activity-text">JavaScript ES6 Features</p>
+                                <span class="activity-meta">189 downloads • 4.7 ⭐ • 1 day ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shared Playlists Tab -->
+                <div id="shared-tab" class="tab-pane">
+                    <div id="sharedPlaylists" class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-icon">🎥</span>
+                            <div class="activity-content">
+                                <p class="activity-text">Complete React Course</p>
+                                <span class="activity-meta">1.2K views • 4.8 ⭐ • 3 days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asked Doubts Tab -->
+                <div id="asked-tab" class="tab-pane">
+                    <div id="askedDoubts" class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-icon">💬</span>
+                            <div class="activity-content">
+                                <p class="activity-text">How does useState work internally?</p>
+                                <span class="activity-meta">12 answers • 45 👍 • 2 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Answered Doubts Tab -->
+                <div id="answered-tab" class="tab-pane">
+                    <div id="answeredDoubts" class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-icon">✅</span>
+                            <div class="activity-content">
+                                <p class="activity-text">Answered: CSS Flexbox vs Grid</p>
+                                <span class="activity-meta">18 👍 • 4 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Edit Profile Modal (Hidden by default) -->
+        <div id="editProfileModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Edit Profile</h3>
+                    <button onclick="closeEditModal()" class="modal-close">&times;</button>
+                </div>
+                <form id="editProfileForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="editName">Name</label>
+                        <input type="text" id="editName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editBio">Bio</label>
+                        <textarea id="editBio" name="bio" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" onclick="closeEditModal()" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
